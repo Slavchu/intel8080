@@ -5,7 +5,7 @@
 */
 class RAM{  
   uint8_t mem[MEMORY_SIZE];
-  RAM() {};
+  RAM();
   ~RAM(){};
 public:
 
