@@ -1,7 +1,6 @@
 #pragma once
 
 #include <common.hpp>
-#include <map>
 
 #define FLAG_SIGN     0b10000000
 #define FLAG_ZERO     0b01000000
@@ -12,6 +11,17 @@
 /*
  * Singletone class that represents INTEL 8080 
 */
+enum ECPU_8080_REGISTERS{
+  REG_A,
+  REG_B,
+  REG_C,
+  REG_D,
+  REG_E,
+  REG_H,
+  REG_L,
+  REG_M
+};
+
 class CPU_8080{
   
   CPU_8080(CPU_8080 const &) = delete;
@@ -29,6 +39,8 @@ class CPU_8080{
   uint8_t flag = 0b00000010;        //layout 0bSZ0A0P1C
   //end of register section
   int process_opcode(uint8_t opcode);
+
+  void mov(ECPU_8080_REGISTERS src, ECPU_8080_REGISTERS dest);
 public:
   static CPU_8080& instance();
   bool tick();
