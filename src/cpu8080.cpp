@@ -1,4 +1,4 @@
-#include <8080cpu.hpp>
+#include <cpu8080.hpp>
 #include <cstdint>
 #include <memory.hpp>
 #include <opcodes8080.hpp>

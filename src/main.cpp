@@ -1,7 +1,7 @@
 #include <cstdint>
 #include <iostream>
 #include <common.hpp>
-#include <8080cpu.hpp>
+#include <cpu8080.hpp>
 #include <memory.hpp>
 #include <chrono>
 #include <thread>
