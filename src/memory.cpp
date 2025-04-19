@@ -1,20 +1,14 @@
-#include "memory.hpp"
 #include <memory.h>
 
-RAM &RAM::instance(){
+#include <memory.hpp>
+
+RAM& RAM::instance() {
     static RAM ram;
     return ram;
 }
 
-RAM::RAM(){
-  memset(&mem, 0, MEMORY_SIZE);
-}
+RAM::RAM() { memset(&mem, 0, MEMORY_SIZE); }
 
-uint8_t RAM::read(uint16_t adress){
-    return mem[adress];
-}
+uint8_t RAM::read(uint16_t adress) { return mem[adress]; }
 
-void RAM::write(uint16_t adress, uint8_t value){
-    mem[adress] = value; 
-}
-
+void RAM::write(uint16_t adress, uint8_t value) { mem[adress] = value; }
