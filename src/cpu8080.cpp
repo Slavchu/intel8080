@@ -9,6 +9,7 @@
 
 // constants
 #define OP_MOV 0b01000000
+#define OP_MVI 0b00000110
 
 // macrosses
 #define SET_FLAG(x, flag) x = x | F
@@ -19,6 +20,7 @@
 #define READ_R_REG(reg) reg & 0xFF
 #define MOV_GET_DEST(opcode) opcode & 0b00111000
 #define MOV_GET_SOURCE(opcode) opcode & 0b00000111
+#define MVI_GET_DEST(opcode) opcode & 0b00111000
 
 uint16_t CPU_8080::get_program_counter() const { return r_PC; }
 
@@ -28,9 +30,14 @@ CPU_8080& CPU_8080::instance() {
 }
 
 int CPU_8080::process_opcode(uint8_t opcode) {
+    auto& ram = RAM::instance();
     if (opcode & OP_MOV) {
         CPU_8080::mov(static_cast<ECPU_8080_REGISTERS>(MOV_GET_DEST(opcode)),
                       static_cast<ECPU_8080_REGISTERS>(MOV_GET_SOURCE(opcode)));
+    } else if (opcode & OP_MVI) {
+        uint8_t value = ram.read(++CPU_8080::r_PC);
+        CPU_8080::mvi(static_cast<ECPU_8080_REGISTERS>(MVI_GET_DEST(opcode)),
+                      value);
     }
     return i8080::op_info[opcode].tick_required;
 }
@@ -167,4 +174,3 @@ void CPU_8080::mvi(ECPU_8080_REGISTERS dest, uint8_t value) {
     }
 }
 // end of instruction zone
-
