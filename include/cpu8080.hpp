@@ -39,7 +39,8 @@ class CPU_8080 {
     // end of register section
     int process_opcode(uint8_t opcode);
 
-    void mov(ECPU_8080_REGISTERS src, ECPU_8080_REGISTERS dest);
+    //instuctions
+    void mov(ECPU_8080_REGISTERS dest, ECPU_8080_REGISTERS src);
 
    public:
     static CPU_8080& instance();

@@ -1,16 +1,24 @@
+/* Hi, stranger!
+ * If you want to understand how this shit works,
+ * please, check this guide http://dunfield.classiccmp.org/r/8080.txt
+ */
 #include <cpu8080.hpp>
 #include <cstdint>
 #include <memory.hpp>
 #include <opcodes8080.hpp>
 
+// constants
+#define OP_MOV 0b01000000
+
+// macrosses
 #define SET_FLAG(x, flag) x = x | F
 #define HAS_FLAG(x, flag) (x & f > 0)
 #define WRITE_L_REG(reg, val) reg |= (val << 8)
 #define WRITE_R_REG(reg, val) reg |= val
 #define READ_L_REG(reg) (reg & 0xFF00) >> 8
 #define READ_R_REG(reg) reg & 0xFF
-
-#define OP_MOV 0b01000000
+#define MOV_GET_DEST(opcode) opcode & 0b00111000
+#define MOV_GET_SOURCE(opcode) opcode & 0b00000111
 
 uint16_t CPU_8080::get_program_counter() const { return r_PC; }
 
@@ -101,6 +109,10 @@ void CPU_8080::mov(ECPU_8080_REGISTERS dest, ECPU_8080_REGISTERS src) {
 }
 
 int CPU_8080::process_opcode(uint8_t opcode) {
+    if (opcode & OP_MOV) {
+        CPU_8080::mov(static_cast<ECPU_8080_REGISTERS>(MOV_GET_DEST(opcode)),
+                      static_cast<ECPU_8080_REGISTERS>(MOV_GET_SOURCE(opcode)));
+    }
     return i8080::op_info[opcode].tick_required;
 }
 
