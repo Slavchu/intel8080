@@ -10,17 +10,20 @@
 // constants
 #define OP_MOV 0b01000000
 #define OP_MVI 0b00000110
+#define OP_LXI 0b00000001
 
 // macrosses
+#define IS_OPCODE(x, opcode) (x & opcode) == opcode
 #define SET_FLAG(x, flag) x = x | F
 #define HAS_FLAG(x, flag) (x & f > 0)
 #define WRITE_L_REG(reg, val) reg |= (val << 8)
 #define WRITE_R_REG(reg, val) reg |= val
 #define READ_L_REG(reg) (reg & 0xFF00) >> 8
 #define READ_R_REG(reg) reg & 0xFF
-#define MOV_GET_DEST(opcode) opcode & 0b00111000
+#define MOV_GET_DEST(opcode) (opcode & 0b00111000) >> 2
 #define MOV_GET_SOURCE(opcode) opcode & 0b00000111
-#define MVI_GET_DEST(opcode) opcode & 0b00111000
+#define MVI_GET_DEST(opcode) (opcode & 0b00111000) >> 4
+#define LXI_GET_DEST(opcode) (opcode & 0b00110000) >> 3
 
 uint16_t CPU_8080::get_program_counter() const { return r_PC; }
 
@@ -31,12 +34,19 @@ CPU_8080& CPU_8080::instance() {
 
 int CPU_8080::process_opcode(uint8_t opcode) {
     auto& ram = RAM::instance();
-    if (opcode & OP_MOV) {
+
+    if (IS_OPCODE(opcode, OP_MOV)) {
         CPU_8080::mov(static_cast<ECPU_8080_REGISTERS>(MOV_GET_DEST(opcode)),
                       static_cast<ECPU_8080_REGISTERS>(MOV_GET_SOURCE(opcode)));
-    } else if (opcode & OP_MVI) {
+    } else if (IS_OPCODE(opcode, OP_MVI)) {
         uint8_t value = ram.read(++CPU_8080::r_PC);
         CPU_8080::mvi(static_cast<ECPU_8080_REGISTERS>(MVI_GET_DEST(opcode)),
+                      value);
+    } else if (IS_OPCODE(opcode, OP_LXI)) {
+        uint16_t value;
+        value = ram.read(++r_PC) << 8;
+        value += ram.read(++r_PC);
+        CPU_8080::lxi(static_cast<ECPU_8080_REGISTER_PAIRS>(LXI_GET_DEST(opcode)),
                       value);
     }
     return i8080::op_info[opcode].tick_required;
@@ -170,6 +180,31 @@ void CPU_8080::mvi(ECPU_8080_REGISTERS dest, uint8_t value) {
         }
         default: {
             throw -1;
+        }
+    }
+}
+
+void CPU_8080::lxi(ECPU_8080_REGISTER_PAIRS dest, uint16_t value) {
+    switch (dest) {
+        case ECPU_8080_REGISTER_PAIRS::REG_BC: {
+            r_BC = value;
+            break;
+        }
+        case ECPU_8080_REGISTER_PAIRS::REG_DE: {
+            r_DE = value;
+            break;
+        }
+        case ECPU_8080_REGISTER_PAIRS::REG_HL: {
+            r_HL = value;
+            break;
+        }
+        case ECPU_8080_REGISTER_PAIRS::REG_SP: {
+            r_SP = value;
+            break;
+        }
+        default: {
+            throw -1;
+            break;
         }
     }
 }

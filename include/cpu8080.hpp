@@ -22,6 +22,13 @@ enum ECPU_8080_REGISTERS {
     REG_M = 0b110
 };
 
+enum ECPU_8080_REGISTER_PAIRS {
+    REG_BC = 0b00,
+    REG_DE = 0b01,
+    REG_HL = 0b10,
+    REG_SP = 0b11
+};
+
 class CPU_8080 {
     CPU_8080(CPU_8080 const&) = delete;
     CPU_8080& operator=(CPU_8080 const&) = delete;
@@ -42,6 +49,7 @@ class CPU_8080 {
     //instuctions
     void mov(ECPU_8080_REGISTERS dest, ECPU_8080_REGISTERS src);
     void mvi(ECPU_8080_REGISTERS dest, uint8_t value);
+    void lxi(ECPU_8080_REGISTER_PAIRS dest, uint16_t value);
 
    public:
     static CPU_8080& instance();
