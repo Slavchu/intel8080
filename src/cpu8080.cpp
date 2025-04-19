@@ -27,6 +27,7 @@ CPU_8080& CPU_8080::instance() {
     return cpu;
 }
 
+// instruction zone
 void CPU_8080::mov(ECPU_8080_REGISTERS dest, ECPU_8080_REGISTERS src) {
     uint8_t value;
 
@@ -108,6 +109,47 @@ void CPU_8080::mov(ECPU_8080_REGISTERS dest, ECPU_8080_REGISTERS src) {
     }
 }
 
+void CPU_8080::mvi(ECPU_8080_REGISTERS dest, uint8_t value) {
+    switch (dest) {
+        case ECPU_8080_REGISTERS::REG_A: {
+            r_A = value;
+            break;
+        }
+        case ECPU_8080_REGISTERS::REG_B: {
+            WRITE_L_REG(r_BC, value);
+            break;
+        }
+        case ECPU_8080_REGISTERS::REG_C: {
+            WRITE_R_REG(r_BC, value);
+            break;
+        }
+        case ECPU_8080_REGISTERS::REG_D: {
+            WRITE_L_REG(r_DE, value);
+            break;
+        }
+        case ECPU_8080_REGISTERS::REG_E: {
+            WRITE_R_REG(r_DE, value);
+            break;
+        }
+        case ECPU_8080_REGISTERS::REG_H: {
+            WRITE_L_REG(r_HL, value);
+            break;
+        }
+        case ECPU_8080_REGISTERS::REG_L: {
+            WRITE_R_REG(r_HL, value);
+            break;
+        }
+        case ECPU_8080_REGISTERS::REG_M: {
+            auto& ram = RAM::instance();
+            ram.write(r_HL, value);
+            break;
+        }
+        default: {
+            throw -1;
+        }
+    }
+}
+// end of instruction zone
 int CPU_8080::process_opcode(uint8_t opcode) {
     if (opcode & OP_MOV) {
         CPU_8080::mov(static_cast<ECPU_8080_REGISTERS>(MOV_GET_DEST(opcode)),

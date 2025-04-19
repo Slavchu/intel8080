@@ -41,6 +41,7 @@ class CPU_8080 {
 
     //instuctions
     void mov(ECPU_8080_REGISTERS dest, ECPU_8080_REGISTERS src);
+    void mvi(ECPU_8080_REGISTERS dest, uint8_t value);
 
    public:
     static CPU_8080& instance();
