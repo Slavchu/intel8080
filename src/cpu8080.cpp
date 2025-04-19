@@ -27,6 +27,23 @@ CPU_8080& CPU_8080::instance() {
     return cpu;
 }
 
+int CPU_8080::process_opcode(uint8_t opcode) {
+    if (opcode & OP_MOV) {
+        CPU_8080::mov(static_cast<ECPU_8080_REGISTERS>(MOV_GET_DEST(opcode)),
+                      static_cast<ECPU_8080_REGISTERS>(MOV_GET_SOURCE(opcode)));
+    }
+    return i8080::op_info[opcode].tick_required;
+}
+
+bool CPU_8080::tick() {
+    uint8_t opcode;
+
+    auto& ram = RAM::instance();
+    opcode = ram.read(r_PC);
+
+    return 1;
+}
+
 // instruction zone
 void CPU_8080::mov(ECPU_8080_REGISTERS dest, ECPU_8080_REGISTERS src) {
     uint8_t value;
@@ -150,19 +167,4 @@ void CPU_8080::mvi(ECPU_8080_REGISTERS dest, uint8_t value) {
     }
 }
 // end of instruction zone
-int CPU_8080::process_opcode(uint8_t opcode) {
-    if (opcode & OP_MOV) {
-        CPU_8080::mov(static_cast<ECPU_8080_REGISTERS>(MOV_GET_DEST(opcode)),
-                      static_cast<ECPU_8080_REGISTERS>(MOV_GET_SOURCE(opcode)));
-    }
-    return i8080::op_info[opcode].tick_required;
-}
 
-bool CPU_8080::tick() {
-    uint8_t opcode;
-
-    auto& ram = RAM::instance();
-    opcode = ram.read(r_PC);
-
-    return 1;
-}
