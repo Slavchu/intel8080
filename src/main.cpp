@@ -2,16 +2,39 @@
 #include <common.hpp>
 #include <cpu8080.hpp>
 #include <cstdint>
+#include <cstdlib>
 #include <fstream>
-#include <iostream>
 #include <memory.hpp>
 #include <thread>
 
-bool load_program(std::string program_path = DEFAULT_PROGRAM_PATH);
+enum EEXCEPTION_LOAD_PROGRAM {
+    FILE_NOT_OPEN = 1
+};
 
-int main() {
+void load_program(std::string program_path = DEFAULT_PROGRAM_PATH);
+
+int main(int argc, char* argv[]) {
     std::cout << "Emulator by slavchoo\n";
-    load_program();
+
+    try {
+        load_program();
+    } catch (EEXCEPTION_LOAD_PROGRAM ex) {
+        switch (ex) {
+            case FILE_NOT_OPEN: {
+                DEBUG_ERROR("File not oppened");
+                exit(-1);
+                break;
+            }
+            default: {
+                DEBUG_ERROR("Unknown error");
+                exit(-1);
+                break;
+            }
+        }
+    } catch (std::ifstream::failure ex) {
+        DEBUG_ERROR("Error reading/closing file");
+    }
+
     auto& cpu = CPU_8080::instance();
     while (1) {
         auto awake_time = std::chrono::steady_clock::now() +
@@ -22,18 +45,18 @@ int main() {
     return 0;
 }
 
-bool load_program(std::string program_path) {
+void load_program(std::string program_path) {
     using namespace std;
 
     ifstream in(program_path, ios::binary);
     uint16_t mem_adress = 0;
     auto& mem = RAM::instance();
 
-    if (!in.is_open()) return 0;
+    if (!in.is_open()) throw EEXCEPTION_LOAD_PROGRAM::FILE_NOT_OPEN;
 
     while (!in.eof()) {
         mem.write(mem_adress, in.get());
         mem_adress++;
     }
-    return 1;
+    in.close();
 }
