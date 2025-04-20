@@ -11,6 +11,7 @@
 #define OP_MOV 0b01000000
 #define OP_MVI 0b00000110
 #define OP_LXI 0b00000001
+#define OP_LDA 0b00111010
 
 // macrosses
 #define IS_OPCODE(x, opcode) (x & opcode) == opcode
@@ -43,11 +44,16 @@ int CPU_8080::process_opcode(uint8_t opcode) {
         CPU_8080::mvi(static_cast<ECPU_8080_REGISTERS>(MVI_GET_DEST(opcode)),
                       value);
     } else if (IS_OPCODE(opcode, OP_LXI)) {
-        uint16_t value;
-        value = ram.read(++r_PC) << 8;
-        value += ram.read(++r_PC);
+        byte_pair_t reg_pair;
+        reg_pair.HBYTE = ram.read(++r_PC);
+        reg_pair.LBYTE = ram.read(++r_PC);
         CPU_8080::lxi(static_cast<ECPU_8080_REGISTER_PAIRS>(LXI_GET_DEST(opcode)),
-                      value);
+                      reg_pair.DBYTE);
+    } else if (IS_OPCODE(opcode, OP_LDA)) {
+        byte_pair_t address;
+        address.HBYTE = ram.read(++r_PC);
+        address.LBYTE = ram.read(++r_PC);
+        CPU_8080::lda(address.HBYTE);
     }
     return i8080::op_info[opcode].tick_required;
 }
@@ -214,5 +220,11 @@ void CPU_8080::lxi(ECPU_8080_REGISTER_PAIRS dest, uint16_t value) {
             break;
         }
     }
+}
+
+
+void CPU_8080::lda(uint16_t address){
+    auto &ram = RAM::instance();
+    r_A = ram.read(address);
 }
 // end of instruction zone

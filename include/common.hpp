@@ -9,4 +9,11 @@
 #define DEFAULT_PROGRAM_PATH "program.bin"
 
 // macrosses
-#define DEBUG_ERROR(err_msg) std::cerr << "ERROR:" <<  __FILE__  << " (" << __PRETTY_FUNCTION__ << ":" << __LINE__ << "):\t\t" err_msg << std::endl 
+#define DEBUG_ERROR(err_msg) std::cerr << "ERROR:" << __FILE__ << " (" << __PRETTY_FUNCTION__ << ":" << __LINE__ << "):\t\t" err_msg << std::endl
+
+union byte_pair_t {
+    uint16_t DBYTE;
+    uint8_t HBYTE;
+    uint8_t LBYTE;
+};
+

@@ -58,6 +58,7 @@ class CPU_8080 {
     void mov(ECPU_8080_REGISTERS dest, ECPU_8080_REGISTERS src);
     void mvi(ECPU_8080_REGISTERS dest, uint8_t value);
     void lxi(ECPU_8080_REGISTER_PAIRS dest, uint16_t value);
+    void lda(uint16_t address);
 
    public:
     static CPU_8080& instance();
