@@ -54,10 +54,17 @@ int CPU_8080::process_opcode(uint8_t opcode) {
 
 bool CPU_8080::tick() {
     uint8_t opcode;
-
+    static uint8_t ticks;
     auto& ram = RAM::instance();
     opcode = ram.read(r_PC);
 
+    try{
+        if(--ticks)
+            return 1;
+        ticks = process_opcode(opcode);
+    } catch(int ex){
+        return 0;
+    }
     return 1;
 }
 

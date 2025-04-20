@@ -44,9 +44,17 @@ class CPU_8080 {
     uint16_t r_SP = 0x00;       // after all starts from 0xFFFE
     uint8_t flag = 0b00000010;  // layout 0bSZ0A0P1C
     // end of register section
+
+    /*
+     * processes opcode
+     * [IN] opcode: opcode, lol, what else could you expect?
+     * return value: ticks required for opcode
+     * 
+     * Note: it is shitcode I didn't test well, it can throw exceptions. PLEASE, HANDLE THEM!!!
+     */
     int process_opcode(uint8_t opcode);
 
-    //instuctions
+    // instuctions
     void mov(ECPU_8080_REGISTERS dest, ECPU_8080_REGISTERS src);
     void mvi(ECPU_8080_REGISTERS dest, uint8_t value);
     void lxi(ECPU_8080_REGISTER_PAIRS dest, uint16_t value);
