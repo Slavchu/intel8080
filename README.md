@@ -4,5 +4,7 @@ To build a project you can use build.sh script. For build you need CMake
 
 Instruction:
 ```bash
-./build.sh
+./build.sh [CMAKE ARGUMENTS]
+#Example: ./build.sh -DCMAKE_BUILD_TYPE=Debug
+#If you don't know how it can be helpful just skip the arguments
 ```
