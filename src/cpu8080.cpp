@@ -7,12 +7,15 @@
 #include <memory.hpp>
 #include <opcodes8080.hpp>
 
+#include "common.hpp"
+
 // constants
 #define OP_MOV 0b01000000
 #define OP_MVI 0b00000110
 #define OP_LXI 0b00000001
 #define OP_LDA 0b00111010
 #define OP_STA 0b00110010
+#define OP_LHDL 0b00101010
 // macrosses
 #define IS_OPCODE(x, opcode) (x & opcode) == opcode
 #define SET_FLAG(x, flag) x = x | F
@@ -59,6 +62,11 @@ int CPU_8080::process_opcode(uint8_t opcode) {
         address.LBYTE = ram.read(++r_PC);
         address.HBYTE = ram.read(++r_PC);
         CPU_8080::sta(address.DBYTE);
+    } else if (IS_OPCODE(opcode, OP_LHDL)){
+        byte_pair_t address;
+        address.LBYTE = ram.read(++r_PC);
+        address.HBYTE = ram.read(++r_PC);
+        CPU_8080::lhdl(address.DBYTE);
     }
 
     ++r_PC;
@@ -241,4 +249,11 @@ void CPU_8080::sta(uint16_t address) {
     ram.write(address, r_A);
 }
 
+void CPU_8080::lhdl(uint16_t address) {
+    auto& ram = RAM::instance();
+    byte_pair_t hl;
+    hl.LBYTE = ram.read(address);
+    hl.HBYTE = ram.read(address + 1);
+    r_HL = hl.DBYTE;
+}
 // end of instruction zone
