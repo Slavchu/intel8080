@@ -21,3 +21,7 @@ Current implemented instructions:
 - lxi
 - lda
 - sta
+- lhdl
+- shdl
+- stax
+- xchg
