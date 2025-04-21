@@ -18,6 +18,7 @@
 #define OP_LHDL 0b00101010
 #define OP_SHDL 0b00100010
 #define OP_LDAX 0b00001010
+#define OP_STAX 0b00000010
 
 // macrosses
 #define IS_OPCODE(x, opcode) (x & opcode) == opcode
@@ -32,6 +33,7 @@
 #define MVI_GET_DEST(opcode) (opcode & 0b00111000) >> 3
 #define LXI_GET_DEST(opcode) (opcode & 0b00110000) >> 4
 #define LDAX_GET_SRC(opcode) (opcode & 00110000) >> 4
+#define STAX_GET_DST(opcode) (opcode & 00110000) >> 4
 
 uint16_t CPU_8080::get_program_counter() const { return r_PC; }
 
@@ -78,6 +80,8 @@ int CPU_8080::process_opcode(uint8_t opcode) {
         CPU_8080::shdl(address.DBYTE);
     } else if (IS_OPCODE(opcode, OP_LDAX)) {
         CPU_8080::ldax(static_cast<ECPU_8080_REGISTER_PAIRS>(LDAX_GET_SRC(opcode)));
+    } else if (IS_OPCODE(opcode, OP_STAX)) {
+        CPU_8080::ldax(static_cast<ECPU_8080_REGISTER_PAIRS>(STAX_GET_DST(opcode)));
     }
 
     ++r_PC;
@@ -294,5 +298,25 @@ void CPU_8080::ldax(ECPU_8080_REGISTER_PAIRS src) {
         }
     }
     r_A = ram.read(address);
+}
+
+void CPU_8080::stax(ECPU_8080_REGISTER_PAIRS dst) {
+    auto& ram = RAM::instance();
+    uint16_t address;
+    switch (dst) {
+        case ECPU_8080_REGISTER_PAIRS::REG_BC: {
+            address = r_BC;
+            break;
+        }
+        case ECPU_8080_REGISTER_PAIRS::REG_DE: {
+            address = r_DE;
+            break;
+        }
+        default: {
+            DEBUG_ERROR("Only BC and DE register pairs allowed");
+            throw -1;
+        }
+    }
+    ram.write(address, r_A);
 }
 // end of instruction zone
