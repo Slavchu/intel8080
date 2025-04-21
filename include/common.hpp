@@ -11,6 +11,7 @@
 
 // macrosses
 #define DEBUG_ERROR(err_msg) std::cerr << "ERROR:" << __FILE__ << " (" << __PRETTY_FUNCTION__ << ":" << __LINE__ << "):\t\t" err_msg << std::endl
+#define DEBUG_PRINT_INFO(msg) std::cout << "INFO:" << __FILE__ << " (" << __PRETTY_FUNCTION__ << ":" << __LINE__ << "):\t\t" msg << std::endl 
 
 union byte_pair_t {
     uint16_t DBYTE;
