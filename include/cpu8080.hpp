@@ -64,7 +64,7 @@ class CPU_8080 {
     void shdl(uint16_t address);
     void ldax(ECPU_8080_REGISTER_PAIRS src);
     void stax(ECPU_8080_REGISTER_PAIRS dst);
-
+    void xchg(void);
    public:
     static CPU_8080& instance();
     bool tick();

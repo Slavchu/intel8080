@@ -2,6 +2,7 @@
  * If you want to understand how this shit works,
  * please, check this guide http://dunfield.classiccmp.org/r/8080.txt
  */
+#include <algorithm>
 #include <cpu8080.hpp>
 #include <cstdint>
 #include <memory.hpp>
@@ -318,5 +319,9 @@ void CPU_8080::stax(ECPU_8080_REGISTER_PAIRS dst) {
         }
     }
     ram.write(address, r_A);
+}
+
+void CPU_8080::xchg(void) {
+    std::swap(r_DE, r_HL);
 }
 // end of instruction zone
