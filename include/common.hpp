@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+
 #include <iostream>
 
 // emulator defaults
@@ -16,4 +17,3 @@ union byte_pair_t {
     uint8_t HBYTE;
     uint8_t LBYTE;
 };
-

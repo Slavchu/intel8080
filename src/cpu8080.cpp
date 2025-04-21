@@ -64,11 +64,11 @@ bool CPU_8080::tick() {
     auto& ram = RAM::instance();
     opcode = ram.read(r_PC);
 
-    try{
-        if(--ticks)
+    try {
+        if (--ticks)
             return 1;
         ticks = process_opcode(opcode);
-    } catch(int ex){
+    } catch (int ex) {
         return 0;
     }
     return 1;
@@ -222,9 +222,8 @@ void CPU_8080::lxi(ECPU_8080_REGISTER_PAIRS dest, uint16_t value) {
     }
 }
 
-
-void CPU_8080::lda(uint16_t address){
-    auto &ram = RAM::instance();
+void CPU_8080::lda(uint16_t address) {
+    auto& ram = RAM::instance();
     r_A = ram.read(address);
 }
 // end of instruction zone
