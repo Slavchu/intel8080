@@ -62,6 +62,7 @@ class CPU_8080 {
     void sta(uint16_t address);
     void lhdl(uint16_t address);
     void shdl(uint16_t address);
+    void ldax(ECPU_8080_REGISTER_PAIRS src);
 
    public:
     static CPU_8080& instance();
