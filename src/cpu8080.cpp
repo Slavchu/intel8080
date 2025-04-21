@@ -16,6 +16,7 @@
 #define OP_LDA 0b00111010
 #define OP_STA 0b00110010
 #define OP_LHDL 0b00101010
+#define OP_SHDL 0b00100010
 // macrosses
 #define IS_OPCODE(x, opcode) (x & opcode) == opcode
 #define SET_FLAG(x, flag) x = x | F
@@ -62,11 +63,16 @@ int CPU_8080::process_opcode(uint8_t opcode) {
         address.LBYTE = ram.read(++r_PC);
         address.HBYTE = ram.read(++r_PC);
         CPU_8080::sta(address.DBYTE);
-    } else if (IS_OPCODE(opcode, OP_LHDL)){
+    } else if (IS_OPCODE(opcode, OP_LHDL)) {
         byte_pair_t address;
         address.LBYTE = ram.read(++r_PC);
         address.HBYTE = ram.read(++r_PC);
         CPU_8080::lhdl(address.DBYTE);
+    } else if (IS_OPCODE(opcode, OP_SHDL)) {
+        byte_pair_t address;
+        address.LBYTE = ram.read(++r_PC);
+        address.HBYTE = ram.read(++r_PC);
+        CPU_8080::shdl(address.DBYTE); 
     }
 
     ++r_PC;
@@ -255,5 +261,13 @@ void CPU_8080::lhdl(uint16_t address) {
     hl.LBYTE = ram.read(address);
     hl.HBYTE = ram.read(address + 1);
     r_HL = hl.DBYTE;
+}
+
+void CPU_8080::shdl(uint16_t address) {
+    byte_pair_t hl;
+    auto& ram = RAM::instance();
+    hl.DBYTE = r_HL;
+    ram.write(address, hl.LBYTE);
+    ram.write(address + 1, hl.HBYTE);
 }
 // end of instruction zone

@@ -61,6 +61,7 @@ class CPU_8080 {
     void lda(uint16_t address);
     void sta(uint16_t address);
     void lhdl(uint16_t address);
+    void shdl(uint16_t address);
 
    public:
     static CPU_8080& instance();
