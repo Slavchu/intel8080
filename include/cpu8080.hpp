@@ -49,7 +49,7 @@ class CPU_8080 {
      * processes opcode
      * [IN] opcode: opcode, lol, what else could you expect?
      * return value: ticks required for opcode
-     * 
+     *
      * Note: it is shitcode I didn't test well, it can throw exceptions. PLEASE, HANDLE THEM!!!
      */
     int process_opcode(uint8_t opcode);
@@ -59,6 +59,7 @@ class CPU_8080 {
     void mvi(ECPU_8080_REGISTERS dest, uint8_t value);
     void lxi(ECPU_8080_REGISTER_PAIRS dest, uint16_t value);
     void lda(uint16_t address);
+    void sta(uint16_t address);
 
    public:
     static CPU_8080& instance();

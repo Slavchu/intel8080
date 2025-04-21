@@ -12,7 +12,7 @@
 #define OP_MVI 0b00000110
 #define OP_LXI 0b00000001
 #define OP_LDA 0b00111010
-
+#define OP_STA 0b00110010
 // macrosses
 #define IS_OPCODE(x, opcode) (x & opcode) == opcode
 #define SET_FLAG(x, flag) x = x | F
@@ -21,9 +21,9 @@
 #define WRITE_R_REG(reg, val) reg |= val
 #define READ_L_REG(reg) (reg & 0xFF00) >> 8
 #define READ_R_REG(reg) reg & 0xFF
-#define MOV_GET_DEST(opcode) (opcode & 0b00111000) >> 2
+#define MOV_GET_DEST(opcode) (opcode & 0b00111000) >> 3
 #define MOV_GET_SOURCE(opcode) opcode & 0b00000111
-#define MVI_GET_DEST(opcode) (opcode & 0b00111000) >> 4
+#define MVI_GET_DEST(opcode) (opcode & 0b00111000) >> 3
 #define LXI_GET_DEST(opcode) (opcode & 0b00110000) >> 3
 
 uint16_t CPU_8080::get_program_counter() const { return r_PC; }
@@ -45,28 +45,37 @@ int CPU_8080::process_opcode(uint8_t opcode) {
                       value);
     } else if (IS_OPCODE(opcode, OP_LXI)) {
         byte_pair_t reg_pair;
-        reg_pair.HBYTE = ram.read(++r_PC);
         reg_pair.LBYTE = ram.read(++r_PC);
+        reg_pair.HBYTE = ram.read(++r_PC);
         CPU_8080::lxi(static_cast<ECPU_8080_REGISTER_PAIRS>(LXI_GET_DEST(opcode)),
                       reg_pair.DBYTE);
     } else if (IS_OPCODE(opcode, OP_LDA)) {
         byte_pair_t address;
-        address.HBYTE = ram.read(++r_PC);
         address.LBYTE = ram.read(++r_PC);
-        CPU_8080::lda(address.HBYTE);
+        address.HBYTE = ram.read(++r_PC);
+        CPU_8080::lda(address.DBYTE);
+    } else if (IS_OPCODE(opcode, OP_STA)) {
+        byte_pair_t address;
+        address.LBYTE = ram.read(++r_PC);
+        address.HBYTE = ram.read(++r_PC);
+        CPU_8080::sta(address.DBYTE);
     }
+
+    ++r_PC;
     return i8080::op_info[opcode].tick_required;
 }
 
 bool CPU_8080::tick() {
     uint8_t opcode;
-    static uint8_t ticks;
+    static uint8_t ticks = 1;
     auto& ram = RAM::instance();
     opcode = ram.read(r_PC);
 
     try {
-        if (--ticks)
+        if (ticks) {
+            ticks--;
             return 1;
+        }
         ticks = process_opcode(opcode);
     } catch (int ex) {
         return 0;
@@ -226,4 +235,10 @@ void CPU_8080::lda(uint16_t address) {
     auto& ram = RAM::instance();
     r_A = ram.read(address);
 }
+
+void CPU_8080::sta(uint16_t address) {
+    auto& ram = RAM::instance();
+    ram.write(address, r_A);
+}
+
 // end of instruction zone
