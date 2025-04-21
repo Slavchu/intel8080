@@ -14,6 +14,8 @@
 
 union byte_pair_t {
     uint16_t DBYTE;
-    uint8_t HBYTE;
-    uint8_t LBYTE;
+    struct {
+        uint8_t LBYTE;
+        uint8_t HBYTE;
+    };
 };
