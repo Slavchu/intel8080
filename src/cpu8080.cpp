@@ -20,6 +20,7 @@
 #define OP_SHDL 0b00100010
 #define OP_LDAX 0b00001010
 #define OP_STAX 0b00000010
+#define OP_XCHG 0b11101011
 
 // macrosses
 #define IS_OPCODE(x, opcode) (x & opcode) == opcode
@@ -82,8 +83,10 @@ int CPU_8080::process_opcode(uint8_t opcode) {
     } else if (IS_OPCODE(opcode, OP_LDAX)) {
         CPU_8080::ldax(static_cast<ECPU_8080_REGISTER_PAIRS>(LDAX_GET_SRC(opcode)));
     } else if (IS_OPCODE(opcode, OP_STAX)) {
-        CPU_8080::ldax(static_cast<ECPU_8080_REGISTER_PAIRS>(STAX_GET_DST(opcode)));
-    }
+        CPU_8080::stax(static_cast<ECPU_8080_REGISTER_PAIRS>(STAX_GET_DST(opcode)));
+    } else if (IS_OPCODE(opcode, OP_XCHG)) {
+        CPU_8080::xchg();
+    } 
 
     ++r_PC;
     return i8080::op_info[opcode].tick_required;
